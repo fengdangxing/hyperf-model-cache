@@ -277,9 +277,8 @@ class ModelCache extends Model
         $page = $params['page'] ?? 1;
 
         $hKey = md5($builder->toSql() . Json::encode($requestParams) . Json::encode($params) . $mod);
-        if (RedisHelper::init()->hExists($key, $hKey) && $cache) {
-            $retJson = RedisHelper::init()->hGet($key, $hKey);
-            $ret = $mod == "getValue" ? $retJson : Json::decode($retJson, true);
+        if ($cache && ($retJson = RedisHelper::init()->hGet($key, $hKey)) !== false) {
+            $ret = $mod == "getValue" ? $retJson : Json::decode((string)$retJson, true);
         } else {
             switch ($mod) {
                 case 'getBuilderAllList':
@@ -289,7 +288,7 @@ class ModelCache extends Model
                 case 'getPageList':
                     $ret = $builder->paginate($limit, $showFields, 'page', $page);
                     $ret = Json::encode($ret);
-                    $ret = Json::decode($ret, true);
+                    $ret = Json::decode((string)$ret, true);
                     break;
                 case 'getRow':
                 case 'getBuilderRow':
