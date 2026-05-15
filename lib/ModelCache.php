@@ -286,7 +286,7 @@ class ModelCache extends Model
                     $ret = $builder->get($showFields)->toArray();
                     break;
                 case 'getPageList':
-                    $ret = $builder->paginate($limit, $showFields, 'page', $page);
+                    $ret = $builder->simplePaginate($limit, $showFields, 'page', $page);
                     $ret = Json::encode($ret);
                     $ret = Json::decode((string)$ret, true);
                     break;
